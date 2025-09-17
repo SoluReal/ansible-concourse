@@ -1,14 +1,13 @@
 ---
-dependencies: []
 galaxy_info:
-  author: Troy Kinsella
-  description: Concourse CI. CI that scales with your project.
+  author: Solureal
+  description: Concourse CI.
   license: MIT
-  min_ansible_version: 2.7
+  min_ansible_version: 2.19.2
   platforms:
   - name: Ubuntu
     versions:
-    - xenial
+    - 24
   galaxy_tags:
     - concourse
     - ci

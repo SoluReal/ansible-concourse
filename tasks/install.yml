@@ -1,4 +1,31 @@
 ---
+- name: Map system architecture to Concourse archive arch
+  set_fact:
+    concourse_archive_arch: >-
+      {{
+        {
+          'x86_64': 'amd64',
+          'aarch64': 'arm64'
+        }[ansible_architecture]
+      }}
+  when: ansible_architecture in ['x86_64', 'aarch64']
+
+- name: Set dynamic checksum for Concourse archive
+  set_fact:
+    concourse_archive_checksum: >-
+      {{
+        {
+          'arm64': concourse_archive_checksum_arm64,
+          'amd64': concourse_archive_checksum_amd64
+        }[concourse_archive_arch]
+      }}
+  when: concourse_archive_arch in ['arm64', 'amd64']
+
+- name: Fail if unsupported architecture
+  fail:
+    msg: "Unsupported architecture: {{ ansible_architecture }}. Only amd64 and arm64 are supported."
+  when: ansible_architecture not in ['x86_64', 'aarch64']
+
 - stat:
     path: "{{ concourse_binary_path }}"
   become: yes
@@ -31,7 +58,7 @@
   tags:
   - no-test
 
-- include: stop.yml
+- import_tasks: stop.yml
   when: needs_install
 
 - name: unpack archive
@@ -72,10 +99,14 @@
     mode: 0750
   become: yes
 
+- name: install postgresql
+  import_tasks: postgresql/install.yml
+  when: concourse_postgres_install
+
 - name: install web
-  include: web/install.yml
+  import_tasks: web/install.yml
   when: concourse_web
 
 - name: install worker
-  include: worker/install.yml
+  import_tasks: worker/install.yml
   when: concourse_worker

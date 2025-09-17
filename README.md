@@ -1,7 +1,5 @@
 # ansible-concourse
 
-[![Build Status][travis-image]][travis-url]
-
 An Ansible role to manage [Concourse CI](https://concourse-ci.org).
 
 ## Scope
@@ -15,29 +13,66 @@ It:
 * Fetches the Concourse binary tarball from the official site.
 * Creates a wrapper script that captures options passed into the binary executable.
 * Installs necessary ssh key files, provided through variables.
+* (Optionally) installs the Postgres database by
+  using [ansible-role-postgresql](https://github.com/geerlingguy/ansible-role-postgresql).
 
 It does not:
 * Generate ssh key-pairs.
-* Manage the Postgres database.
 * Manage any cloud infrastructure.
 
 ## Installation
 
 ```bash
-ansible-galaxy install troykinsella.concourse
+ansible-galaxy install solureal.concourse
 ```
 
-## Branches
+## Getting started
 
-* `master`: Concourse 7.x (7.1.0)
-* `support/6.x`: Concourse 6.x
-* `support/5.x`: Concourse 5.x
-* `support/4.x`: Concourse 4.x
-* `support/3.x`: Concourse 3.x
+To install concourse you need a couple
+of [keys](https://concourse-ci.org/concourse-generate-key.html#generating-the-keys). You can generate those with:
 
-Note: Concourse makes backwards-incompatible command option changes within major versions, so these branches
-will likely not support early minor or patch revisions of a major version. The latest version
-used in testing is shown in brackets.
+```bash
+ssh-keygen -t rsa -b 4096 -m PEM -f ./session_signing_key
+ssh-keygen -t rsa -b 4096 -m PEM -f ./tsa_host_key
+ssh-keygen -t rsa -b 4096 -m PEM -f ./worker_key
+rm session_signing_key.pub # this file is not needed by concourse
+```
+
+```yaml
+
+- hosts: atc
+  roles:
+    - role: solureal.concourse
+      concourse_web: yes
+      concourse_authorized_worker_keys:
+        - "{{ worker_public_key }}"
+      concourse_local_users:
+        - name: admin
+          password: my_bcrypted_password
+      concourse_main_team_local_users:
+        - admin
+      concourse_external_url: http://concourse.example.com
+      
+      # Installs postgresql on atc node
+      concourse_postgres_install: yes
+      concourse_postgres_host: localhost
+      concourse_postgres_port: 5432
+      concourse_postgres_user: concourse
+      concourse_postgres_password: concourse
+      concourse_postgres_database: concourse
+
+- hosts: workers
+  roles:
+    - role: solureal.concourse
+      concourse_worker: yes
+      concourse_tsa_host: my-atc
+      concourse_tsa_public_key: "{{ host_pub_key }}"
+      concourse_tsa_worker_key: "{{ worker_key }}"
+      concourse_worker_env:
+        CONCOURSE_GARDEN_NETWORK_POOL: 10.254.0.0/16
+        CONCOURSE_GARDEN_MAX_CONTAINERS: 512
+        CONCOURSE_GARDEN_DOCKER_REGISTRY: https://docker.my-private-registry.org
+```
 
 ## Role Variables
 
@@ -45,7 +80,7 @@ See `defaults/main.yml` for default values not specified below. Many of these va
 to the concourse binary at launch time. Run `concourse web -h` or `concourse worker -h` for more detail.
 
 Note: The vast majority of variables have sensible defaults and normally need not be defined,
-but exist for when control over related behaviour is needed. See examples for a minimal configuration set.
+but exist for when control over related behaviour is needed.
 
 ### Maintenance Variables
 
@@ -71,7 +106,6 @@ but exist for when control over related behaviour is needed. See examples for a 
 * `concourse_archive_url`: Optional. The URL at which the Concourse release tarball can be downloaded.
 * `concourse_archive_checksum`: Optional. The checksum of the Concourse release tarball used to validate the downloaded archive.
 * `concourse_archive_os`: Optional. The operating system for which to fetch the Concourse release tarball.
-* `concourse_archive_arch`: Optional. The system architecture for which to fetch the Concourse release tarball.
 * `concourse_archive_fetch_timeout`: Optional. The timeout in seconds for fetching the Concourse release tarball.
 * `concourse_archive_delete_after_unarchive`: Optional. Default: "yes". Delete the release tarball after it is unpacked.
 * `concourse_binary_mode`: Optional. The file mode of the Concourse binary.
@@ -123,6 +157,8 @@ but exist for when control over related behaviour is needed. See examples for a 
 
 #### Web PostgreSQL Variables
 
+* `concourse_postgres_install`: Optional. Install postgresql
+  using [ansible-role-postgresql](https://github.com/geerlingguy/ansible-role-postgresql).
 * `concourse_postgres_host`: Optional. The Postgres host to connect to.
 * `concourse_postgres_port`: Optional. The Postgres port to connect to.
 * `concourse_postgres_socket`: Optional. The path to a Unix domain socket to connect to.
@@ -181,56 +217,10 @@ Unsupported. Do it yer dang self by supplying `concourse web` command options wi
 * `concourse_work_volume_mount_path`: Optional. The directory to which the work volume will be mounted.
 * `concourse_work_volume_mount_opts`: Optional. Work volume mount options.
 
-## Example Playbook
+## Credits
 
-    - hosts: atc
-      roles:
-      - role: troykinsella.concourse
-        concourse_web: yes
-        concourse_authorized_worker_keys:
-        - "{{ worker_public_key }}"
-        concourse_postgres_host: concoursedb.abc123.us-east-1.rds.amazonaws.com
-        concourse_postgres_user: concourse
-        concourse_postgres_password: changeme
-        concourse_postgres_database: atc
-        concourse_local_users:
-        - name: admin
-          password: my_bcrypted_password
-        concourse_main_team_local_users:
-        - admin
-        concourse_external_url: http://concourse.example.com
-
-    - hosts: workers
-      roles:
-      - role: troykinsella.concourse
-        concourse_worker: yes
-        concourse_tsa_host: my-atc
-        concourse_tsa_public_key: "{{ host_pub_key }}"
-        concourse_tsa_worker_key: "{{ worker_key }}"
-        concourse_worker_env:
-          CONCOURSE_GARDEN_NETWORK_POOL: 10.254.0.0/16
-          CONCOURSE_GARDEN_MAX_CONTAINERS: 512
-          CONCOURSE_GARDEN_DOCKER_REGISTRY: https://docker.my-private-registry.org
-
-## Testing
-
-Prerequisites:
-* Install Docker
-
-To run serverspec tests:
-
-```bash
-docker build .
-```
-
-## Contributors
-
-* [gaelL](https://github.com/gaelL)
-* [troykinsella](https://github.com/troykinsella) (Maintainer)
+* This project is a fork from: https://github.com/troykinsella/ansible-concourse
 
 ## License
 
-MIT © Troy Kinsella
-
-[travis-image]: https://travis-ci.org/troykinsella/ansible-concourse.svg?branch=master
-[travis-url]: https://travis-ci.org/troykinsella/ansible-concourse
+MIT © SoluReal

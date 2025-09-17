@@ -1,0 +1,11 @@
+---
+- name: Install postgresql
+  include_role:
+    name: geerlingguy.postgresql
+  vars:
+    postgresql_users:
+      - name: "{{ concourse_postgres_user }}"
+        password: "{{ concourse_postgres_password }}"
+    postgresql_databases:
+      - name: "{{ concourse_postgres_database }}"
+        owner: "{{ concourse_postgres_user }}"

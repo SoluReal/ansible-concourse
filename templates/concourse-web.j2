@@ -26,6 +26,12 @@ exec {{ concourse_binary_path }} web \
 {% if concourse_tls_key is defined %}
   --tls-key "{{ concourse_tls_key_path }}" \
 {% endif %}
+{% if concourse_enable_lets_encrypt is defined and concourse_enable_lets_encrypt %}
+    --enable-lets-encrypt \
+{% endif %}
+{% if concourse_lets_encrypt_acme_url is defined %}
+    --lets-encrypt-acme-url "{{ concourse_lets_encrypt_acme_url }}" \
+{% endif %}
 {% if concourse_peer_address is defined %}
   --peer-address "{{ concourse_peer_address }}" \
 {% endif %}
