@@ -2,3 +2,4 @@
 skip_list:
   - ignore-errors
   - yaml[comments]
+  - fqcn[action]
