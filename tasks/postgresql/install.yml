@@ -1,6 +1,6 @@
 ---
 - name: Install postgresql
-  include_role:
+  ansible.builtin.include_role:
     name: geerlingguy.postgresql
   vars:
     postgresql_users:

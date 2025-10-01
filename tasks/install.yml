@@ -1,6 +1,6 @@
 ---
 - name: Map system architecture to Concourse archive arch
-  set_fact:
+  ansible.builtin.set_fact:
     concourse_archive_arch: >-
       {{
         {
@@ -11,7 +11,7 @@
   when: ansible_architecture in ['x86_64', 'aarch64']
 
 - name: Set dynamic checksum for Concourse archive
-  set_fact:
+  ansible.builtin.set_fact:
     concourse_archive_checksum: >-
       {{
         {
@@ -22,91 +22,93 @@
   when: concourse_archive_arch in ['arm64', 'amd64']
 
 - name: Fail if unsupported architecture
-  fail:
+  ansible.builtin.fail:
     msg: "Unsupported architecture: {{ ansible_architecture }}. Only amd64 and arm64 are supported."
   when: ansible_architecture not in ['x86_64', 'aarch64']
 
-- stat:
+- name: Register concourse binary existence
+  ansible.builtin.stat:
     path: "{{ concourse_binary_path }}"
-  become: yes
+  become: true
   become_user: root
-  ignore_errors: yes
+  ignore_errors: true
   register: binary
 
-- name: get concourse version
-  command: "{{ concourse_binary_path }} -v"
-  become: yes
+- name: Get concourse version
+  ansible.builtin.command: "{{ concourse_binary_path }} -v"
+  become: true
   register: installed_version
   changed_when: false
   when: binary.stat is defined and binary.stat.exists
 
-- name: check needs install
-  set_fact:
+- name: Check needs install
+  ansible.builtin.set_fact:
     needs_install: "{{ not binary.stat.exists or installed_version is defined and installed_version.stdout != concourse_version }}"
 
-- name: download archive
-  get_url:
+- name: Download archive
+  ansible.builtin.get_url:
     url: "{{ concourse_archive_url }}"
     dest: "{{ concourse_install_prefix_dir }}/{{ concourse_archive_name }}"
     checksum: "{{ concourse_archive_checksum }}"
-    mode: 0755
-    force: no
+    mode: "0755"
+    force: false
     timeout: "{{ concourse_archive_fetch_timeout }}"
-  become: yes
+  become: true
   when: needs_install
   register: binary_download
   tags:
-  - no-test
+    - no-test
 
-- import_tasks: stop.yml
+- name: Stop concourse
+  ansible.builtin.import_tasks: stop.yml
   when: needs_install
 
-- name: unpack archive
-  unarchive:
+- name: Unpack archive
+  ansible.builtin.unarchive:
     src: "{{ concourse_install_prefix_dir }}/{{ concourse_archive_name }}"
     dest: "{{ concourse_install_prefix_dir }}"
-    remote_src: yes
-    mode: 0755
+    remote_src: true
+    mode: "0755"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
-  become: yes
+  become: true
   when: binary_download is not defined or binary_download is changed
   notify:
-  - restart concourse web
-  - restart concourse worker
+    - restart concourse web
+    - restart concourse worker
 
-- name: delete archive
-  file:
+- name: Delete archive
+  ansible.builtin.file:
     path: "{{ concourse_install_prefix_dir }}/{{ concourse_archive_name }}"
     state: absent
-  become: yes
+  become: true
   when: concourse_archive_delete_after_unarchive
 
-- name: binary permissions
-  file:
+- name: Binary permissions
+  ansible.builtin.file:
     path: "{{ concourse_binary_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_binary_mode }}"
-  become: yes
+  become: true
 
-- name: create etc dir
-  file:
+- name: Create etc dir
+  ansible.builtin.file:
     path: "{{ concourse_etc_dir }}"
     state: directory
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
-    mode: 0750
-  become: yes
+    mode: "0750"
+  become: true
 
-- name: install postgresql
-  import_tasks: postgresql/install.yml
+- name: Install postgresql
+  ansible.builtin.import_tasks: postgresql/install.yml
   when: concourse_postgres_install
 
-- name: install web
-  import_tasks: web/install.yml
+- name: Install web
+  ansible.builtin.import_tasks: web/install.yml
   when: concourse_web
 
-- name: install worker
-  import_tasks: worker/install.yml
+- name: Install worker
+  ansible.builtin.import_tasks: worker/install.yml
   when: concourse_worker

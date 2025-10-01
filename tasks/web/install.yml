@@ -1,26 +1,26 @@
 ---
-- name: create web launch script
-  template:
+- name: Create web launch script
+  ansible.builtin.template:
     src: concourse-web.j2
     dest: "{{ concourse_web_launcher_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_web_launcher_mode }}"
-    force: yes
-  become: yes
+    force: true
+  become: true
   notify:
-  - restart concourse web
+    - restart concourse web
 
-- name: create web service
-  template:
+- name: Create web service
+  ansible.builtin.template:
     src: concourse-web.service.j2
     dest: /etc/systemd/system/concourse-web.service
-    owner: root
-    force: yes
-  become: yes
+    mode: "0644"
+    force: true
+  become: true
   register: concourse_web_service
   notify:
-  - restart concourse web
-  - systemd daemon reload
+    - restart concourse web
+    - systemd daemon reload
   tags:
-  - no-test
+    - no-test

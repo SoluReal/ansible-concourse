@@ -1,22 +1,22 @@
 ---
-- name: copy tsa public key
-  copy:
+- name: Copy tsa public key
+  ansible.builtin.copy:
     content: "{{ concourse_tsa_public_key }}"
     dest: "{{ concourse_tsa_public_key_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   notify:
-  - restart concourse worker
+    - restart concourse worker
 
-- name: copy worker key
-  copy:
+- name: Copy worker key
+  ansible.builtin.copy:
     content: "{{ concourse_tsa_worker_key }}"
     dest: "{{ concourse_tsa_worker_key_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   notify:
-  - restart concourse worker
+    - restart concourse worker

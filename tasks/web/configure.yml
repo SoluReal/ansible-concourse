@@ -1,69 +1,69 @@
 ---
-- name: copy host key
-  copy:
+- name: Copy host key
+  ansible.builtin.copy:
     content: "{{ concourse_host_key }}"
     dest: "{{ concourse_host_key_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   notify:
-  - restart concourse web
+    - restart concourse web
 
-- name: copy session signing key
-  copy:
+- name: Copy session signing key
+  ansible.builtin.copy:
     content: "{{ concourse_session_signing_key }}"
     dest: "{{ concourse_session_signing_key_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   notify:
-  - restart concourse web
+    - restart concourse web
 
-- name: copy authorized worker keys
-  template:
+- name: Copy authorized worker keys
+  ansible.builtin.template:
     src: authorized_worker_keys.j2
     dest: "{{ concourse_authorized_worker_keys_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   notify:
-  - restart concourse web
+    - restart concourse web
 
-- name: tls certificate | concourse
-  copy:
+- name: tls certificate | Concourse
+  ansible.builtin.copy:
     content: "{{ concourse_tls_certificate }}"
     dest: "{{ concourse_tls_certificate_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   when: concourse_tls_certificate is defined
   notify:
-  - restart concourse web
+    - restart concourse web
 
-- name: tls key | concourse
-  copy:
+- name: tls key | Concourse
+  ansible.builtin.copy:
     content: "{{ concourse_tls_key }}"
     dest: "{{ concourse_tls_key_path }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   when: concourse_tls_key is defined
   notify:
-  - restart concourse web
+    - restart concourse web
 
-- name: copy resource type defaults
-  copy:
+- name: Copy resource type defaults
+  ansible.builtin.copy:
     content: "{{ concourse_base_resource_type_defaults | to_nice_yaml }}"
     dest: "{{ concourse_base_resource_type_defaults_file }}"
     owner: "{{ concourse_user }}"
     group: "{{ concourse_group }}"
     mode: "{{ concourse_etc_files_mode }}"
-  become: yes
+  become: true
   when: concourse_base_resource_type_defaults is defined
   notify:
-  - restart concourse web
+    - restart concourse web

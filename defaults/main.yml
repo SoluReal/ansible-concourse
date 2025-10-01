@@ -2,11 +2,11 @@
 
 # Maintenance variables
 
-concourse_force_restart: no
+concourse_force_restart: false
 
 # User variables
 
-concourse_manage_user: yes
+concourse_manage_user: true
 concourse_user: concourse
 concourse_uid: 14500
 concourse_group: "{{ concourse_user }}"
@@ -26,20 +26,20 @@ concourse_archive_checksum_arm64: "sha256:9558921274e4e857fbe433196c2b37309f342e
 concourse_archive_checksum_amd64: "sha256:08012f2240997a0aa7a747bec7907e1d372ddfd9c252688091aadf544db1dc5b"
 concourse_archive_os: linux
 concourse_archive_fetch_timeout: 30
-concourse_archive_delete_after_unarchive: yes
+concourse_archive_delete_after_unarchive: true
 concourse_binary_mode: "0750"
 concourse_etc_files_mode: "0400"
 
 # Common Variables
 
-concourse_service_enabled: yes
-concourse_service_start: yes
+concourse_service_enabled: true
+concourse_service_start: true
 #concourse_log_level: info
 concourse_env_file: /etc/environment
 
 # Web variables
 
-concourse_web: no
+concourse_web: false
 #concourse_bind_ip:
 #concourse_bind_port: 8080
 #concourse_tls_bind_port: 443
@@ -67,10 +67,9 @@ concourse_session_signing_key_path: "{{ concourse_etc_dir }}/session_signing_key
 concourse_base_resource_type_defaults_file: "{{ concourse_etc_dir }}/base_resource_type_defaults.yml"
 #concourse_web_options:
 concourse_web_env: {}
-
 # Web PostgreSQL variables
 
-concourse_postgres_install: no
+concourse_postgres_install: false
 #concourse_postgres_host: localhost
 #concourse_postgres_port: 5432
 #concourse_postgres_user: concourse
@@ -87,7 +86,6 @@ concourse_postgres_install: no
 
 concourse_local_users: []
 concourse_main_team_local_users: []
-
 # Web GitHub authentication variables
 
 #concourse_github_client_id:
@@ -95,16 +93,15 @@ concourse_main_team_local_users: []
 concourse_main_team_github_users: []
 concourse_main_team_github_orgs: []
 concourse_main_team_github_teams: []
-
 # Worker variables
 
-concourse_worker: no
+concourse_worker: false
 concourse_worker_launcher_path: "{{ concourse_bin_dir }}/concourse-worker"
 concourse_worker_binary_mode: "0700"
 concourse_worker_land_path: "{{ concourse_bin_dir }}/concourse-land-worker"
 concourse_worker_retire_path: "{{ concourse_bin_dir }}/concourse-retire-worker"
-concourse_worker_land_on_stop: no
-concourse_worker_retire_on_stop: yes
+concourse_worker_land_on_stop: false
+concourse_worker_retire_on_stop: true
 concourse_work_dir: "{{ concourse_install_dir }}/work"
 concourse_tsa_public_key_path: "{{ concourse_etc_dir }}/host_key.pub"
 concourse_tsa_worker_key_path: "{{ concourse_etc_dir }}/worker_key"
@@ -115,14 +112,13 @@ concourse_tsa_worker_key_path: "{{ concourse_etc_dir }}/worker_key"
 #concourse_baggageclaim_driver:
 #concourse_worker_options:
 concourse_worker_env: {}
-
 # Worker filesystem variables
 
-concourse_manage_work_volume: no
+concourse_manage_work_volume: false
 #concourse_work_volume_device:
 concourse_work_volume_fs_type: "{% if concourse_baggageclaim_driver is defined and concourse_baggageclaim_driver == 'btrfs' %}btrfs{% else %}ext4{% endif %}"
 concourse_work_volume_fs_opts: ""
-concourse_work_volume_fs_force_create: no
-concourse_work_volume_fs_resize: no
+concourse_work_volume_fs_force_create: false
+concourse_work_volume_fs_resize: false
 concourse_work_volume_mount_path: "{{ concourse_work_dir }}"
 concourse_work_volume_mount_opts: "rw,noatime,nodiratime"

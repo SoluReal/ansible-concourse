@@ -1,6 +1,8 @@
 ---
-- import_tasks: web/configure.yml
+- name: Configure web
+  ansible.builtin.import_tasks: web/configure.yml
   when: concourse_web
 
-- import_tasks: worker/configure.yml
+- name: Configure worker
+  ansible.builtin.import_tasks: worker/configure.yml
   when: concourse_worker

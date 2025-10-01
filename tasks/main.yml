@@ -1,14 +1,17 @@
 ---
-
-- import_tasks: user.yml
+- name: Setup concourse user
+  ansible.builtin.import_tasks: user.yml
   when: concourse_manage_user
 
-- import_tasks: install.yml
-- import_tasks: configure.yml
-- import_tasks: start.yml
-
-- shell: /bin/true
+- name: Install
+  ansible.builtin.import_tasks: install.yml
+- name: Configure
+  ansible.builtin.import_tasks: configure.yml
+- name: Start concourse
+  ansible.builtin.import_tasks: start.yml
+- name: Force restart # noqa: no-changed-when
+  ansible.builtin.command: /bin/true
   when: concourse_force_restart
   notify:
-  - restart concourse web
-  - restart concourse worker
+    - restart concourse web
+    - restart concourse worker

@@ -1,19 +1,20 @@
-- name: stop web
-  service:
+---
+- name: Stop web
+  ansible.builtin.service:
     name: concourse-web
     state: stopped
-  become: yes
-  ignore_errors: yes
+  become: true
+  ignore_errors: true
   when: concourse_web
   tags:
-  - no-test
+    - no-test
 
-- name: stop worker
-  service:
+- name: Stop worker
+  ansible.builtin.service:
     name: concourse-worker
     state: stopped
-  become: yes
-  ignore_errors: yes
+  become: true
+  ignore_errors: true
   when: concourse_worker
   tags:
-  - no-test
+    - no-test

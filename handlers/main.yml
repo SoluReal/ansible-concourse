@@ -1,33 +1,33 @@
 ---
-- name: stop concourse web
-  service:
+- name: Stop concourse web
+  ansible.builtin.service:
     name: concourse-web
     state: stopped
-  become: yes
+  become: true
   when: concourse_web_service is defined and concourse_web
 
-- name: stop concourse worker
-  service:
+- name: Stop concourse worker
+  ansible.builtin.service:
     name: concourse-worker
     state: stopped
-  become: yes
+  become: true
   when: concourse_worker_service is defined and concourse_worker
 
-- name: restart concourse web
-  service:
+- name: Restart concourse web
+  ansible.builtin.service:
     name: concourse-web
     state: restarted
-  become: yes
+  become: true
   when: concourse_web_service is defined and concourse_web and concourse_service_enabled and concourse_service_start
 
-- name: restart concourse worker
-  service:
+- name: Restart concourse worker
+  ansible.builtin.service:
     name: concourse-worker
     state: restarted
-  become: yes
+  become: true
   when: concourse_worker_service is defined and concourse_worker and concourse_service_enabled and concourse_service_start
 
-- name: systemd daemon reload
-  systemd:
-    daemon_reload: yes
-  become: yes
+- name: Systemd daemon reload
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true

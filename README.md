@@ -43,7 +43,7 @@ rm session_signing_key.pub # this file is not needed by concourse
 - hosts: atc
   roles:
     - role: solureal.concourse
-      concourse_web: yes
+      concourse_web: true
       concourse_authorized_worker_keys:
         - "{{ worker_public_key }}"
       concourse_local_users:
@@ -54,7 +54,7 @@ rm session_signing_key.pub # this file is not needed by concourse
       concourse_external_url: http://concourse.example.com
       
       # Installs postgresql on atc node
-      concourse_postgres_install: yes
+      concourse_postgres_install: true
       concourse_postgres_host: localhost
       concourse_postgres_port: 5432
       concourse_postgres_user: concourse
@@ -64,7 +64,7 @@ rm session_signing_key.pub # this file is not needed by concourse
 - hosts: workers
   roles:
     - role: solureal.concourse
-      concourse_worker: yes
+      concourse_worker: true
       concourse_tsa_host: my-atc
       concourse_tsa_public_key: "{{ host_pub_key }}"
       concourse_tsa_worker_key: "{{ worker_key }}"
