@@ -32,7 +32,7 @@
   notify:
     - restart concourse web
 
-- name: tls certificate | Concourse
+- name: Tls certificate | Concourse
   ansible.builtin.copy:
     content: "{{ concourse_tls_certificate }}"
     dest: "{{ concourse_tls_certificate_path }}"
@@ -44,7 +44,7 @@
   notify:
     - restart concourse web
 
-- name: tls key | Concourse
+- name: Tls key | Concourse
   ansible.builtin.copy:
     content: "{{ concourse_tls_key }}"
     dest: "{{ concourse_tls_key_path }}"
