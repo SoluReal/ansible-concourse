@@ -21,7 +21,7 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v6
         with:
-          python-version: "3.13"
+          python-version: "3.14"
 
       # Install ansible and ansible-lint
       - name: Install Ansible and Ansible-Lint
