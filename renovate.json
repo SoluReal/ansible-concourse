@@ -6,24 +6,11 @@
     {
       "fileMatch": ["^.*\\.ya?ml$"],
       "matchStrings": [
-        "concourse_version:\\s*(?<currentValue>\\S+)",
-        "concourse_archive_checksum_arm64:\\s*\"sha256:(?<currentDigest>[a-f0-9]+)\""
+        "concourse_version:\\s*(?<currentValue>\\S+)"
       ],
-      "datasourceTemplate": "github-release-attachments",
+      "datasourceTemplate": "github-releases",
       "depNameTemplate": "concourse/concourse",
       "extractVersionTemplate": "^v?(?<version>.*)$",
-      "lookupNameTemplate": "concourse-{{{version}}}-linux-arm64.tgz.sha256"
-    },
-    {
-      "fileMatch": ["^.*\\.ya?ml$"],
-      "matchStrings": [
-        "concourse_version:\\s*(?<currentValue>\\S+)",
-        "concourse_archive_checksum_amd64:\\s*\"sha256:(?<currentDigest>[a-f0-9]+)\""
-      ],
-      "datasourceTemplate": "github-release-attachments",
-      "depNameTemplate": "concourse/concourse",
-      "extractVersionTemplate": "^v?(?<version>.*)$",
-      "lookupNameTemplate": "concourse-{{{version}}}-linux-amd64.tgz.sha256"
     }
   ],
   "packageRules": [
