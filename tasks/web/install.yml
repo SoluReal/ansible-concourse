@@ -9,7 +9,7 @@
     force: true
   become: true
   notify:
-    - restart concourse web
+    - Restart concourse web
 
 - name: Create web service
   ansible.builtin.template:
@@ -20,7 +20,7 @@
   become: true
   register: concourse_web_service
   notify:
-    - restart concourse web
-    - systemd daemon reload
+    - Restart concourse web
+    - Systemd daemon reload
   tags:
     - no-test

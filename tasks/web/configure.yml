@@ -8,7 +8,7 @@
     mode: "{{ concourse_etc_files_mode }}"
   become: true
   notify:
-    - restart concourse web
+    - Restart concourse web
 
 - name: Copy session signing key
   ansible.builtin.copy:
@@ -19,7 +19,7 @@
     mode: "{{ concourse_etc_files_mode }}"
   become: true
   notify:
-    - restart concourse web
+    - Restart concourse web
 
 - name: Copy authorized worker keys
   ansible.builtin.template:
@@ -30,7 +30,7 @@
     mode: "{{ concourse_etc_files_mode }}"
   become: true
   notify:
-    - restart concourse web
+    - Restart concourse web
 
 - name: Tls certificate | Concourse
   ansible.builtin.copy:
@@ -42,7 +42,7 @@
   become: true
   when: concourse_tls_certificate is defined
   notify:
-    - restart concourse web
+    - Restart concourse web
 
 - name: Tls key | Concourse
   ansible.builtin.copy:
@@ -54,7 +54,7 @@
   become: true
   when: concourse_tls_key is defined
   notify:
-    - restart concourse web
+    - Restart concourse web
 
 - name: Copy resource type defaults
   ansible.builtin.copy:
@@ -66,4 +66,4 @@
   become: true
   when: concourse_base_resource_type_defaults is defined
   notify:
-    - restart concourse web
+    - Restart concourse web

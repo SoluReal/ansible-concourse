@@ -8,7 +8,7 @@
     mode: "{{ concourse_etc_files_mode }}"
   become: true
   notify:
-    - restart concourse worker
+    - Restart concourse worker
 
 - name: Copy worker key
   ansible.builtin.copy:
@@ -19,4 +19,4 @@
     mode: "{{ concourse_etc_files_mode }}"
   become: true
   notify:
-    - restart concourse worker
+    - Restart concourse worker

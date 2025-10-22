@@ -3,7 +3,7 @@
 # {{ ansible_managed }}
 
 {% for key, value in concourse_web_env.items() %}
-export {{ key }}="{{ value }}"
+export {{ key }}='{{ value }}'
 {% endfor %}
 
 exec {{ concourse_binary_path }} web \
@@ -25,18 +25,6 @@ exec {{ concourse_binary_path }} web \
 {% endif %}
 {% if concourse_tls_key is defined %}
   --tls-key "{{ concourse_tls_key_path }}" \
-{% endif %}
-{% if concourse_enable_lets_encrypt is defined and concourse_enable_lets_encrypt %}
-    --enable-lets-encrypt \
-{% endif %}
-{% if concourse_lets_encrypt_acme_url is defined %}
-    --lets-encrypt-acme-url "{{ concourse_lets_encrypt_acme_url }}" \
-{% endif %}
-{% if concourse_peer_address is defined %}
-  --peer-address "{{ concourse_peer_address }}" \
-{% endif %}
-{% if concourse_external_url %}
-  --external-url "{{ concourse_external_url }}" \
 {% endif %}
 {% if concourse_encryption_key is defined %}
   --encryption-key "{{ concourse_encryption_key }}" \
@@ -77,35 +65,8 @@ exec {{ concourse_binary_path }} web \
 {% if concourse_postgres_database is defined %}
   --postgres-database "{{ concourse_postgres_database }}" \
 {% endif %}
-{% for user in concourse_local_users %}
-  --add-local-user "{{ user.name }}:{{ user.password }}" \
-{% endfor %}
-{% for name in concourse_main_team_local_users %}
-  --main-team-local-user "{{ name }}" \
-{% endfor %}
-{% if concourse_github_client_id is defined %}
-  --github-client-id "{{ concourse_github_client_id }}" \
-{% endif %}
-{% if concourse_github_client_secret is defined %}
-  --github-client-secret "{{ concourse_github_client_secret }}" \
-{% endif %}
-{% for name in concourse_main_team_github_users %}
-  --main-team-github-user "{{ name }}" \
-{% endfor %}
-{% for org in concourse_main_team_github_orgs %}
-  --main-team-github-org "{{ org }}" \
-{% endfor %}
-{% for team in concourse_main_team_github_teams %}
-  --main-team-github-team "{{ team }}" \
-{% endfor %}
-{% if concourse_auth_duration is defined %}
-  --auth-duration "{{ concourse_auth_duration }}" \
-{% endif %}
 {% if concourse_log_level is defined %}
   --log-level "{{ concourse_log_level }}" \
-{% endif %}
-{% if concourse_resource_checking_interval is defined %}
-  --resource-checking-interval "{{ concourse_resource_checking_interval }}" \
 {% endif %}
 {% if concourse_base_resource_type_defaults is defined %}
   --base-resource-type-defaults "{{ concourse_base_resource_type_defaults_file }}" \

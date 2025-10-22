@@ -13,5 +13,5 @@
   ansible.builtin.command: /bin/true
   when: concourse_force_restart
   notify:
-    - restart concourse web
-    - restart concourse worker
+    - Restart concourse web
+    - Restart concourse worker

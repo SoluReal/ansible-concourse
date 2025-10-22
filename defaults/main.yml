@@ -43,14 +43,10 @@ concourse_web: false
 #concourse_bind_ip:
 #concourse_bind_port: 8080
 #concourse_tls_bind_port: 443
-#concourse_enable_lets_encrypt: true
-#concourse_lets_encrypt_acme_url:
 #concourse_tls_certificate:
 concourse_tls_certificate_path: "{{ concourse_etc_dir }}/tls_cert"
 #concourse_tls_key:
 concourse_tls_key_path: "{{ concourse_etc_dir }}/tls_key"
-#concourse_peer_address: "{{ ansible_default_ipv4.address }}"
-#concourse_external_url:
 concourse_web_launcher_path: "{{ concourse_bin_dir }}/concourse-web"
 concourse_web_launcher_mode: "0700"
 concourse_cli_artifacts_dir: "{{ concourse_install_dir }}/fly-assets"
@@ -62,13 +58,10 @@ concourse_session_signing_key_path: "{{ concourse_etc_dir }}/session_signing_key
 #concourse_old_encryption_key:
 #concourse_host_key:
 #concourse_authorized_worker_keys: []
-#concourse_auth_duration:
-#concourse_resource_checking_interval:
-concourse_base_resource_type_defaults_file: "{{ concourse_etc_dir }}/base_resource_type_defaults.yml"
-#concourse_web_options:
+#concourse_base_resource_type_defaults_file: "{{ concourse_etc_dir }}/base_resource_type_defaults.yml"
 concourse_web_env: {}
-# Web PostgreSQL variables
 
+# Web PostgreSQL variables
 concourse_postgres_install: false
 #concourse_postgres_host: localhost
 #concourse_postgres_port: 5432
@@ -82,17 +75,6 @@ concourse_postgres_install: false
 #concourse_postgres_client_key:
 #concourse_postgres_connect_timeout:
 
-# Web local authentication variables
-
-concourse_local_users: []
-concourse_main_team_local_users: []
-# Web GitHub authentication variables
-
-#concourse_github_client_id:
-#concourse_github_client_secret:
-concourse_main_team_github_users: []
-concourse_main_team_github_orgs: []
-concourse_main_team_github_teams: []
 # Worker variables
 
 concourse_worker: false
@@ -108,9 +90,7 @@ concourse_tsa_worker_key_path: "{{ concourse_etc_dir }}/worker_key"
 #concourse_tsa_host:
 #concourse_tsa_public_key:
 #concourse_tsa_worker_key:
-#concourse_worker_tag:
 #concourse_baggageclaim_driver:
-#concourse_worker_options:
 concourse_worker_env: {}
 # Worker filesystem variables
 

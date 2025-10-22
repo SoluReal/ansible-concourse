@@ -46,13 +46,7 @@ rm session_signing_key.pub # this file is not needed by concourse
       concourse_web: true
       concourse_authorized_worker_keys:
         - "{{ worker_public_key }}"
-      concourse_local_users:
-        - name: admin
-          password: my_bcrypted_password
-      concourse_main_team_local_users:
-        - admin
-      concourse_external_url: http://concourse.example.com
-      
+
       # Installs postgresql on atc node
       concourse_postgres_install: true
       concourse_postgres_host: localhost
@@ -60,6 +54,10 @@ rm session_signing_key.pub # this file is not needed by concourse
       concourse_postgres_user: concourse
       concourse_postgres_password: concourse
       concourse_postgres_database: concourse
+      concourse_web_env:
+        CONCOURSE_ENABLE_LETS_ENCRYPT: true
+        CONCOURSE_TLS_BIND_PORT: 443
+        CONCOURSE_EXTERNAL_URL: http://concourse.example.com
 
 - hosts: workers
   roles:
@@ -72,7 +70,12 @@ rm session_signing_key.pub # this file is not needed by concourse
         CONCOURSE_GARDEN_NETWORK_POOL: 10.254.0.0/16
         CONCOURSE_GARDEN_MAX_CONTAINERS: 512
         CONCOURSE_GARDEN_DOCKER_REGISTRY: https://docker.my-private-registry.org
+
 ```
+
+Use the `concourse_[web|worker]_env` properties to pass environment variables to the concourse worker or web process.
+Most supported variables can be found in the [concourse web documentation](https://concourse-ci.org/concourse-web.html) and 
+[concourse worker documentation](https://concourse-ci.org/concourse-worker.html).
 
 ## Role Variables
 
@@ -133,8 +136,6 @@ but exist for when control over related behaviour is needed.
 * `concourse_tls_key`: Optional. Optional. The content of the TLS key to use for HTTPS termination.
 * `concourse_tls_key_path`: Optional. The remote file path of the TLS key to use for HTTPS termination.
   Normally, only `concourse_tls_key` needs to be defined. 
-* `concourse_peer_address`: Optional. The URL at which this ATC can be reached from other ATCs in the cluster.
-* `concourse_external_url`: Optional. The URL at which any ATC can be reached from the outside.
 * `concourse_web_launcher_path`: Optional. The path to the script that launches the Concourse web process.
 * `concourse_web_launcher_mode`: Optional. The file mode of the web launcher script.
 * `concourse_cli_artifacts_dir`: Optional. The value of the `--cli-artifacts-dir` option.
@@ -148,12 +149,22 @@ but exist for when control over related behaviour is needed.
   data is encrypted. If provided with a new key, data is re-encrypted.
 * `concourse_host_key`: Required. The host key.
 * `concourse_authorized_worker_keys`: Required. Concatenated authorized worker keys.
-* `concourse_auth_duration`: Optional. The length of time for which tokens are valid.
-* `concourse_resource_checking_interval`: Optional. Interval on which to check for new versions of resources. 
 * `concourse_base_resource_type_defaults`: Optional. A hash of cluster-wide defaults for resource types.
 * `concourse_base_resource_type_defaults_file`: Optional. The path to the resource type defaults file.
-* `concourse_web_options`: Optional. Other non-managed options to pass to `concourse`.
 * `concourse_web_env`: Optional. A hash of environment variables made available to the `concourse web` process.
+
+#### Authentication
+
+To setup authentication, checkout the [concouse auth documentation](https://concourse-ci.org/auth.html).
+
+Set the required env variables in `concourse_web_env`. E.g. to configure local user auth:
+
+```
+  ...
+  concourse_web_env:
+    CONCOURSE_ADD_LOCAL_USER: myuser:mypass,anotheruser:anotherpass
+    CONCOURSE_MAIN_TEAM_LOCAL_USER: myuser
+```
 
 #### Web PostgreSQL Variables
 
@@ -171,24 +182,6 @@ but exist for when control over related behaviour is needed.
 * `concourse_postgres_connect_timeout`: Optional. The Postgres dialing timeout.
 * `concourse_postgres_database`: Optional. The Postgres database name.
 
-#### Web Local Authentication Variables
-
-* `concourse_local_users`: Optional. A list of concourse user credentials that are added as local users. 
-  Entries are objects having `name` and `password` fields (see example). Passwords can be plain text or bcrypted.
-* `concourse_main_team_local_users`: Optional. List of whitelisted local concourse users (of the supplied local user list).
-
-#### Web GitHub Authentication Variables
-
-* `concourse_github_client_id`: Optional. GitHub client ID.
-* `concourse_github_client_secret`: Optional. GitHub client secret.
-* `concourse_main_team_github_users`: Optional. List of whitelisted GitHub users.
-* `concourse_main_team_github_orgs`: Optional. List of whitelisted GitHub orgs.
-* `concourse_main_team_github_teams`: Optional. List of whitelisted GitHub teams formatted as "org:team".
-
-#### Web Other Authentication Methods
-
-Unsupported. Do it yer dang self by supplying `concourse web` command options with the `concourse_web_options` variable.
-
 ### Worker Variables
 
 * `concourse_worker`: Optional. Set to "yes" to install a Concourse worker.
@@ -204,9 +197,7 @@ Unsupported. Do it yer dang self by supplying `concourse web` command options wi
 * `concourse_tsa_host`: Required. The value of the `--tsa-host` option.
 * `concourse_tsa_public_key`: Required. The tsa public key.
 * `concourse_tsa_worker_key`: Required. The tsa worker private key.
-* `concourse_worker_tag`: Optional. The value of the `--tag` option.
 * `concourse_baggageclaim_driver`: Optional. The driver to use for managing volumes.
-* `concourse_worker_options`: Optional. Other non-managed options to pass to `concourse`.
 * `concourse_worker_env`: Optional. A hash of environment variables made available to the `concourse worker` process.
 * `concourse_manage_work_volume`: Optional. Default: "no". Activate management of the work volume.
 * `concourse_work_volume_device`: Required when `concourse_manage_work_volume` is "yes". The device to mount as the work volume.

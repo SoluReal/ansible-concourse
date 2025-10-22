@@ -22,7 +22,7 @@
     force: true
   become: true
   notify:
-    - restart concourse worker
+    - Restart concourse worker
 
 - name: Create worker land script
   ansible.builtin.template:
@@ -54,7 +54,7 @@
   become: true
   register: concourse_worker_service
   notify:
-    - restart concourse worker
-    - systemd daemon reload
+    - Restart concourse worker
+    - Systemd daemon reload
   tags:
     - no-test

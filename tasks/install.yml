@@ -74,8 +74,8 @@
   become: true
   when: binary_download is not defined or binary_download is changed
   notify:
-    - restart concourse web
-    - restart concourse worker
+    - Restart concourse web
+    - Restart concourse worker
 
 - name: Delete archive
   ansible.builtin.file:

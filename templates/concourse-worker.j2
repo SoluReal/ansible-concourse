@@ -3,7 +3,7 @@
 # {{ ansible_managed }}
 
 {% for key, value in concourse_worker_env.items() %}
-export {{ key }}="{{ value }}"
+export {{ key }}='{{ value }}'
 {% endfor %}
 
 exec {{ concourse_binary_path }} worker \
@@ -11,16 +11,10 @@ exec {{ concourse_binary_path }} worker \
   --tsa-public-key "{{ concourse_tsa_public_key_path }}" \
   --tsa-worker-private-key "{{ concourse_tsa_worker_key_path }}" \
   --work-dir "{{ concourse_work_dir }}" \
-{% if concourse_worker_tag is defined %}
-  --tag "{{ concourse_worker_tag }}" \
-{% endif %}
 {% if concourse_log_level is defined %}
   --log-level "{{ concourse_log_level }}" \
 {% endif %}
 {% if concourse_baggageclaim_driver is defined %}
   --baggageclaim-driver "{{ concourse_baggageclaim_driver }}" \
-{% endif %}
-{% if concourse_worker_options is defined %}
-  {{ concourse_worker_options }}
 {% endif %}
   ;
