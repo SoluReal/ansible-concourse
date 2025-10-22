@@ -1,3 +1,38 @@
 {
-  "extends": ["config:base"]
+  "extends": [
+    "config:base"
+  ],
+  "regexManagers": [
+    {
+      "fileMatch": ["^.*\\.ya?ml$"],
+      "matchStrings": [
+        "concourse_version:\\s*(?<currentValue>\\S+)",
+        "concourse_archive_checksum_arm64:\\s*\"sha256:(?<currentDigest>[a-f0-9]+)\""
+      ],
+      "datasourceTemplate": "github-release-attachments",
+      "depNameTemplate": "concourse/concourse",
+      "extractVersionTemplate": "^v?(?<version>.*)$",
+      "lookupNameTemplate": "concourse-{{{version}}}-linux-arm64.tgz.sha256"
+    },
+    {
+      "fileMatch": ["^.*\\.ya?ml$"],
+      "matchStrings": [
+        "concourse_version:\\s*(?<currentValue>\\S+)",
+        "concourse_archive_checksum_amd64:\\s*\"sha256:(?<currentDigest>[a-f0-9]+)\""
+      ],
+      "datasourceTemplate": "github-release-attachments",
+      "depNameTemplate": "concourse/concourse",
+      "extractVersionTemplate": "^v?(?<version>.*)$",
+      "lookupNameTemplate": "concourse-{{{version}}}-linux-amd64.tgz.sha256"
+    }
+  ],
+  "packageRules": [
+    {
+      "matchPackageNames": ["concourse/concourse"],
+      "groupName": "Concourse release updates",
+      "groupSlug": "concourse",
+      "separateMajorMinor": true,
+      "separateMinorPatch": true
+    }
+  ]
 }
