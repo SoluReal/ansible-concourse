@@ -10,7 +10,7 @@
       ],
       "matchStrings": [
         "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+_version:\\s+(?<currentValue>.*)",
-        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?) digestVersion=(?<currentValue>.*)\\s+concourse_.*_url:\\s+https://github\\.com/concourse/concourse/releases/download/v(?<currentValue>[^/]+)/concourse-(?<currentValue>[^-]+)-linux-.*\\.tgz\\s+concourse_archive_checksum_.*:\\s+\"sha256:(?<currentDigest>.*?)\""
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?) digestVersion=(?<currentValue>.*)\\s+concourse_archive_checksum_.*:\\s+\"sha256:(?<currentDigest>.*?)\""
       ],
       "versioningTemplate": "{{#if versioning}}{{{versioning}}}{{else}}semver{{/if}}"
     }

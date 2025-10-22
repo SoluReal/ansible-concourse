@@ -18,11 +18,9 @@ concourse_gid: "{{ concourse_uid }}"
 concourse_version: 7.14.1
 
 # renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v7.14.1
-concourse_amd64_url: https://github.com/concourse/concourse/releases/download/v7.14.1/concourse-7.14.1-linux-amd64.tgz
 concourse_archive_checksum_arm64: "sha256:9558921274e4e857fbe433196c2b37309f342ed9a47402cfcd21a822462f528d"
 
 # renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v7.14.1
-concourse_arm64_url: https://github.com/concourse/concourse/releases/download/v7.14.1/concourse-7.14.1-linux-arm64.tgz
 concourse_archive_checksum_amd64: "sha256:08012f2240997a0aa7a747bec7907e1d372ddfd9c252688091aadf544db1dc5b"
 
 concourse_install_prefix_dir: /opt
