@@ -14,7 +14,7 @@ concourse_gid: "{{ concourse_uid }}"
 
 # Installation variables
 
-# renovate: datasource=github-releases depName=concourse/concourse
+# renovate: datasource=github-release-attachments depName=concourse/concourse
 concourse_version: 7.14.1
 concourse_install_prefix_dir: /opt
 concourse_install_dir: "{{ concourse_install_prefix_dir }}/concourse"
