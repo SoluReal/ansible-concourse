@@ -6,20 +6,9 @@
     {
       "fileMatch": ["^.*\\.ya?ml$"],
       "matchStrings": [
-        "concourse_version:\\s*(?<currentValue>\\S+)"
-      ],
-      "datasourceTemplate": "github-releases",
-      "depNameTemplate": "concourse/concourse",
-      "extractVersionTemplate": "^v?(?<version>.*)$",
-    }
-  ],
-  "packageRules": [
-    {
-      "matchPackageNames": ["concourse/concourse"],
-      "groupName": "Concourse release updates",
-      "groupSlug": "concourse",
-      "separateMajorMinor": true,
-      "separateMinorPatch": true
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)\\s+.+_version=\"(?<currentValue>.*)\"",
+        "# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?) digestVersion=(?<currentValue>.*)\\s+.+_sha256.*=\"(?<currentDigest>.*)\""
+      ]
     }
   ]
 }
