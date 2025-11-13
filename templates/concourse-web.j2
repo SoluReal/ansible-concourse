@@ -71,7 +71,7 @@ exec {{ concourse_binary_path }} web \
 {% if concourse_base_resource_type_defaults is defined %}
   --base-resource-type-defaults "{{ concourse_base_resource_type_defaults_file }}" \
 {% endif %}
-{% if concourse_web_options is defined %}
-  {{ concourse_web_options }}
+{% if concourse_enable_global_resources is defined %}
+  --enable-global-resources \
 {% endif %}
   ;

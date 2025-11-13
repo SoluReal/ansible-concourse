@@ -151,6 +151,7 @@ but exist for when control over related behaviour is needed.
 * `concourse_authorized_worker_keys`: Required. Concatenated authorized worker keys.
 * `concourse_base_resource_type_defaults`: Optional. A hash of cluster-wide defaults for resource types.
 * `concourse_base_resource_type_defaults_file`: Optional. The path to the resource type defaults file.
+* `concourse_enable_global_resources`: Optional. Use the [experimental option to use global resources](https://concourse-ci.org/global-resources.html).
 * `concourse_web_env`: Optional. A hash of environment variables made available to the `concourse web` process.
 
 #### Authentication
