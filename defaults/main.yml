@@ -17,8 +17,8 @@ concourse_gid: "{{ concourse_uid }}"
 # renovate: datasource=github-release-attachments depName=concourse/concourse
 concourse_version: 8.0.0
 
-# renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v7.14.3
-concourse_archive_checksum_arm64: "sha256:9515825955b43e6b452999ca8cc77175cdbf79eaefc360edb53a5892ba2e5712"
+# renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v8.0.0
+concourse_archive_checksum_arm64: "sha256:f5217f269b859843f3f390ff184cbbdc5188052234760e7c281c09991cbc54b0"
 
 # renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v8.0.0
 concourse_archive_checksum_amd64: "sha256:1703e4a4697822af1b9c09c5f2270f70ad80ea19c19212b70c00c97696e195a3"
