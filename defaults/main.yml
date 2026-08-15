@@ -15,13 +15,13 @@ concourse_gid: "{{ concourse_uid }}"
 # Installation variables
 
 # renovate: datasource=github-release-attachments depName=concourse/concourse
-concourse_version: 8.2.4
+concourse_version: 8.3.0
 
-# renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v8.2.4
-concourse_archive_checksum_arm64: "sha256:e2cf1a0cc90d5529a7448c11ea7cce28065573b4776bade2d11abc04b273a33c"
+# renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v8.3.0
+concourse_archive_checksum_arm64: "sha256:9a598825aa07089861272cd77f906f0a33379a46cbb2aa7d906d0a1fa63ac231"
 
-# renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v8.2.4
-concourse_archive_checksum_amd64: "sha256:ed2bb4ddf0e750bbf3c420e316236a9b6a9539c7d1d97ecabc0163401314a537"
+# renovate: datasource=github-release-attachments depName=concourse/concourse digestVersion=v8.3.0
+concourse_archive_checksum_amd64: "sha256:320b0cde214893378213d1f2f38eb515c55d0d8128185b076fd7ce555bf09e2c"
 
 concourse_install_prefix_dir: /opt
 concourse_install_dir: "{{ concourse_install_prefix_dir }}/concourse"
