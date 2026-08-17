@@ -6,12 +6,16 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
+User={{ concourse_user }}
+Group={{ concourse_group }}
 EnvironmentFile=-{{ concourse_env_file }}
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 TasksMax=infinity
 LimitNOFILE=infinity
 LimitMEMLOCK=infinity
 Restart=on-failure
+RestartSec=3
+TimeoutStopSec=60
 ExecStart={{ concourse_web_launcher_path }}
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGTERM
