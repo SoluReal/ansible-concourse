@@ -1,0 +1,80 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  vars:
+    concourse_web: true
+    concourse_worker: true
+    concourse_tsa_host: 127.0.0.1
+    concourse_install_prefix_dir: /opt
+    concourse_archive_os: linux
+
+    # A fake version keeps this scenario immune to renovate bumping the
+    # real concourse_version default in defaults/main.yml — nothing here
+    # downloads or executes a real Concourse release (see skip-tags:
+    # no-test in molecule.yml), so the value just has to be self-consistent.
+    concourse_version: 0.0.0-molecule-fixture
+
+    concourse_host_key: |
+      -----BEGIN OPENSSH PRIVATE KEY-----
+      molecule-test-fixture-not-a-real-key
+      -----END OPENSSH PRIVATE KEY-----
+    concourse_session_signing_key: |
+      -----BEGIN RSA PRIVATE KEY-----
+      molecule-test-fixture-not-a-real-key
+      -----END RSA PRIVATE KEY-----
+    concourse_tsa_public_key: "ssh-ed25519 AAAAmoleculeTestFixtureNotARealKey concourse-host"
+    concourse_tsa_worker_key: |
+      -----BEGIN OPENSSH PRIVATE KEY-----
+      molecule-test-fixture-not-a-real-key
+      -----END OPENSSH PRIVATE KEY-----
+    concourse_authorized_worker_keys:
+      - "ssh-ed25519 AAAAmoleculeTestFixtureNotARealKey concourse-worker"
+
+    concourse_archive_delete_after_unarchive: false
+
+  pre_tasks:
+    - name: Map system architecture to the archive suffix the role would compute
+      ansible.builtin.set_fact:
+        concourse_fixture_arch: >-
+          {{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_architecture] }}
+
+    - name: Compute the archive filename the role will look for
+      ansible.builtin.set_fact:
+        concourse_fixture_archive_name: >-
+          concourse-{{ concourse_version }}-{{ concourse_archive_os }}-{{ concourse_fixture_arch }}.tgz
+
+    - name: Create fixture build directory
+      ansible.builtin.file:
+        path: /tmp/concourse-fixture/concourse/bin
+        state: directory
+        mode: "0755"
+
+    - name: Write a stub concourse binary
+      ansible.builtin.copy:
+        dest: /tmp/concourse-fixture/concourse/bin/concourse
+        mode: "0755"
+        content: |
+          #!/bin/sh
+          echo "{{ concourse_version }}"
+
+    - name: Package the stub binary as the archive the role expects to unpack # noqa: command-instead-of-module
+      ansible.builtin.command: >-
+        tar -czf {{ concourse_install_prefix_dir }}/{{ concourse_fixture_archive_name }}
+        -C /tmp/concourse-fixture concourse
+      args:
+        creates: "{{ concourse_install_prefix_dir }}/{{ concourse_fixture_archive_name }}"
+
+    - name: Check whether the stub binary is already unpacked
+      ansible.builtin.stat:
+        path: "{{ concourse_install_prefix_dir }}/concourse/bin/concourse"
+      register: concourse_fixture_existing_binary
+
+    - name: Report the archive as already up to date once it has been unpacked once
+      ansible.builtin.set_fact:
+        binary_download:
+          changed: false
+      when: concourse_fixture_existing_binary.stat.exists
+
+  roles:
+    - role: ../../.. # noqa: role-name[path]
