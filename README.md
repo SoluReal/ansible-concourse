@@ -24,6 +24,7 @@ It does not:
 
 ```bash
 ansible-galaxy install solureal.concourse
+ansible-galaxy collection install community.general ansible.posix
 ```
 
 ## Getting started
@@ -151,7 +152,7 @@ but exist for when control over related behaviour is needed.
 * `concourse_authorized_worker_keys`: Required. Concatenated authorized worker keys.
 * `concourse_base_resource_type_defaults`: Optional. A hash of cluster-wide defaults for resource types.
 * `concourse_base_resource_type_defaults_file`: Optional. The path to the resource type defaults file.
-* `concourse_enable_global_resources`: Optional. Use the [experimental option to use global resources](https://concourse-ci.org/global-resources.html).
+* `concourse_enable_global_resources`: Optional. Default: "yes". Use the [option to share resource caches/checks across pipelines](https://concourse-ci.org/global-resources.html) instead of duplicating them per pipeline. Set to "no" to restore the previous role default.
 * `concourse_web_env`: Optional. A hash of environment variables made available to the `concourse web` process.
 
 #### Authentication
@@ -198,7 +199,11 @@ Set the required env variables in `concourse_web_env`. E.g. to configure local u
 * `concourse_tsa_host`: Required. The value of the `--tsa-host` option.
 * `concourse_tsa_public_key`: Required. The tsa public key.
 * `concourse_tsa_worker_key`: Required. The tsa worker private key.
-* `concourse_baggageclaim_driver`: Optional. The driver to use for managing volumes.
+* `concourse_baggageclaim_driver`: Optional. Default: `overlay`. The driver to use for managing volumes. `overlay`
+  avoids the "naive" driver's full recursive copy on every volume creation, which is a major throughput difference
+  on a busy worker. Set to `false` to fall back to Concourse's own auto-detection (the previous role default).
+  For best `overlay` performance, back `concourse_work_dir` with local SSD/NVMe storage rather than network
+  storage.
 * `concourse_worker_env`: Optional. A hash of environment variables made available to the `concourse worker` process.
 * `concourse_manage_work_volume`: Optional. Default: "no". Activate management of the work volume.
 * `concourse_work_volume_device`: Required when `concourse_manage_work_volume` is "yes". The device to mount as the work volume.
@@ -208,6 +213,23 @@ Set the required env variables in `concourse_web_env`. E.g. to configure local u
 * `concourse_work_volume_fs_resize`: Optional. Default: "no". If yes, if the work volume block device and filesystem size differ, grow the filesystem into the space.
 * `concourse_work_volume_mount_path`: Optional. The directory to which the work volume will be mounted.
 * `concourse_work_volume_mount_opts`: Optional. Work volume mount options.
+
+#### Worker Host Tuning Variables
+
+These tune the host itself for running containerized build workloads. The I/O variables rewrite host-wide
+VM/writeback behaviour and default to off, since they're only appropriate when this host is dedicated to running
+Concourse.
+
+* `concourse_worker_manage_inotify_limits`: Optional. Default: "yes". Raise `fs.inotify.max_user_watches` and
+  `fs.inotify.max_user_instances`, since containers share the host's inotify limits and build tooling using
+  watch-mode easily exhausts the stock Linux defaults.
+* `concourse_worker_inotify_max_user_watches`: Optional. Default: `1048576`.
+* `concourse_worker_inotify_max_user_instances`: Optional. Default: `1024`.
+* `concourse_worker_manage_io_tuning`: Optional. Default: "no". Tune `vm.dirty_ratio`, `vm.dirty_background_ratio`
+  and `vm.swappiness` for a host where write durability/latency isn't shared with other workloads.
+* `concourse_worker_vm_dirty_ratio`: Optional. Default: `40`.
+* `concourse_worker_vm_dirty_background_ratio`: Optional. Default: `10`.
+* `concourse_worker_vm_swappiness`: Optional. Default: `10`.
 
 ## Credits
 

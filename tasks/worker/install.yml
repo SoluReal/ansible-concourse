@@ -12,6 +12,9 @@
   ansible.builtin.import_tasks: filesystem.yml
   when: concourse_manage_work_volume
 
+- name: Tune host for containerized build workloads
+  ansible.builtin.import_tasks: tuning.yml
+
 - name: Create worker launch script
   ansible.builtin.template:
     src: concourse-worker.j2
