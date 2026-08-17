@@ -37,7 +37,7 @@
     - name: Map system architecture to the archive suffix the role would compute
       ansible.builtin.set_fact:
         concourse_fixture_arch: >-
-          {{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_architecture] }}
+          {{ {'x86_64': 'amd64', 'aarch64': 'arm64'}[ansible_facts['architecture']] }}
 
     - name: Compute the archive filename the role will look for
       ansible.builtin.set_fact:
