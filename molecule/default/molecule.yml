@@ -1,0 +1,31 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: concourse-noble
+    image: "geerlingguy/docker-ubuntu2404-ansible:latest"
+    pre_build_image: true
+provisioner:
+  name: ansible
+  options:
+    skip-tags: no-test
+  inventory:
+    host_vars:
+      concourse-noble:
+        ansible_python_interpreter: /usr/bin/python3
+verifier:
+  name: testinfra
+  options:
+    v: true
+scenario:
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - converge
+    - idempotence
+    - verify
+    - destroy

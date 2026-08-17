@@ -13,3 +13,6 @@ galaxy_info:
     - concourse
     - ci
   github_branch: master
+
+collections:
+  - community.general

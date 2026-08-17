@@ -1,0 +1,4 @@
+---
+# No external role dependencies for this scenario.
+# Collection dependencies live in collections.yml.
+roles: []
