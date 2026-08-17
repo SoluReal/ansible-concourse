@@ -6,12 +6,34 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
+User={{ concourse_user }}
+Group={{ concourse_group }}
 EnvironmentFile=-{{ concourse_env_file }}
 AmbientCapabilities=CAP_NET_BIND_SERVICE
 TasksMax=infinity
 LimitNOFILE=infinity
 LimitMEMLOCK=infinity
 Restart=on-failure
+RestartSec=3
+TimeoutStopSec=60
+# concourse-web is a stateless HTTP/API process (all state lives in
+# Postgres) with no need for host devices, kernel tuning, namespace
+# creation or SUID escalation, so this is safe without needing to touch
+# ProtectSystem/SystemCallFilter, which would require verifying every
+# path/syscall the binary actually uses.
+NoNewPrivileges=true
+ProtectHome=true
+PrivateTmp=true
+ProtectClock=true
+ProtectKernelTunables=true
+ProtectKernelModules=true
+ProtectKernelLogs=true
+ProtectControlGroups=true
+RestrictSUIDSGID=true
+RestrictRealtime=true
+RestrictNamespaces=true
+LockPersonality=true
+MemoryDenyWriteExecute=true
 ExecStart={{ concourse_web_launcher_path }}
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGTERM

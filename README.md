@@ -24,6 +24,7 @@ It does not:
 
 ```bash
 ansible-galaxy install solureal.concourse
+ansible-galaxy collection install community.general ansible.posix
 ```
 
 ## Getting started
@@ -151,7 +152,7 @@ but exist for when control over related behaviour is needed.
 * `concourse_authorized_worker_keys`: Required. Concatenated authorized worker keys.
 * `concourse_base_resource_type_defaults`: Optional. A hash of cluster-wide defaults for resource types.
 * `concourse_base_resource_type_defaults_file`: Optional. The path to the resource type defaults file.
-* `concourse_enable_global_resources`: Optional. Use the [experimental option to use global resources](https://concourse-ci.org/global-resources.html).
+* `concourse_enable_global_resources`: Optional. Default: "yes". Use the [option to share resource caches/checks across pipelines](https://concourse-ci.org/global-resources.html) instead of duplicating them per pipeline. Set to "no" to restore the previous role default.
 * `concourse_web_env`: Optional. A hash of environment variables made available to the `concourse web` process.
 
 #### Authentication
@@ -198,7 +199,8 @@ Set the required env variables in `concourse_web_env`. E.g. to configure local u
 * `concourse_tsa_host`: Required. The value of the `--tsa-host` option.
 * `concourse_tsa_public_key`: Required. The tsa public key.
 * `concourse_tsa_worker_key`: Required. The tsa worker private key.
-* `concourse_baggageclaim_driver`: Optional. The driver to use for managing volumes.
+* `concourse_baggageclaim_driver`: Optional. Default: `overlay`. The driver to use for managing volumes. `btrfs`
+  is also supported. Set to `false` to fall back to Concourse's own auto-detection (the previous role default).
 * `concourse_worker_env`: Optional. A hash of environment variables made available to the `concourse worker` process.
 * `concourse_manage_work_volume`: Optional. Default: "no". Activate management of the work volume.
 * `concourse_work_volume_device`: Required when `concourse_manage_work_volume` is "yes". The device to mount as the work volume.
@@ -208,6 +210,18 @@ Set the required env variables in `concourse_web_env`. E.g. to configure local u
 * `concourse_work_volume_fs_resize`: Optional. Default: "no". If yes, if the work volume block device and filesystem size differ, grow the filesystem into the space.
 * `concourse_work_volume_mount_path`: Optional. The directory to which the work volume will be mounted.
 * `concourse_work_volume_mount_opts`: Optional. Work volume mount options.
+
+#### Worker Host Tuning Variables
+
+Tunes the host itself for a machine dedicated to running Concourse/containerd workloads (inotify limits, swap,
+writeback). All gated behind one master switch since it's host-wide and only fits a dedicated box.
+
+* `concourse_worker_tune_os`: Optional. Default: "no". Master switch for the tuning below.
+* `concourse_worker_inotify_max_user_watches`: Optional. Default: `1048576`.
+* `concourse_worker_inotify_max_user_instances`: Optional. Default: `1024`.
+* `concourse_worker_vm_swappiness`: Optional. Default: `0`.
+* `concourse_worker_vm_dirty_ratio`: Optional. Default: `40`.
+* `concourse_worker_vm_dirty_background_ratio`: Optional. Default: `10`.
 
 ## Credits
 

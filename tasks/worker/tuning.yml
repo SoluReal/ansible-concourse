@@ -1,0 +1,24 @@
+---
+- name: Tune host for containerized build workloads
+  ansible.posix.sysctl:
+    name: "{{ item.name }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
+    reload: true
+  become: true
+  loop:
+    - name: fs.inotify.max_user_watches
+      value: "{{ concourse_worker_inotify_max_user_watches }}"
+    - name: fs.inotify.max_user_instances
+      value: "{{ concourse_worker_inotify_max_user_instances }}"
+    - name: vm.swappiness
+      value: "{{ concourse_worker_vm_swappiness }}"
+    - name: vm.dirty_ratio
+      value: "{{ concourse_worker_vm_dirty_ratio }}"
+    - name: vm.dirty_background_ratio
+      value: "{{ concourse_worker_vm_dirty_background_ratio }}"
+  loop_control:
+    label: "{{ item.name }}"
+  when: concourse_worker_tune_os
+  tags:
+    - no-test
