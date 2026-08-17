@@ -16,10 +16,6 @@ LimitMEMLOCK=infinity
 Restart=on-failure
 RestartSec=3
 TimeoutStopSec=60
-# Deprioritise the OOM killer for concourse-web relative to whatever else
-# is running on this host - it's small and stateless compared to a
-# worker's build containers.
-OOMScoreAdjust=-250
 # concourse-web is a stateless HTTP/API process (all state lives in
 # Postgres) with no need for host devices, kernel tuning, namespace
 # creation or SUID escalation, so this is safe without needing to touch

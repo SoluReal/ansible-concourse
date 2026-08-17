@@ -70,6 +70,7 @@ concourse_web_env: {}
 # duplicating them per pipeline - cuts redundant checks and volume
 # storage, which matters most once several pipelines share resources.
 # Set to false to restore the previous role default.
+# Still a real, non-deprecated, default-off flag as of Concourse 8.3.0.
 concourse_enable_global_resources: true
 
 # Web PostgreSQL variables
@@ -101,11 +102,9 @@ concourse_tsa_worker_key_path: "{{ concourse_etc_dir }}/worker_key"
 #concourse_tsa_host:
 #concourse_tsa_public_key:
 #concourse_tsa_worker_key:
-# overlay avoids baggageclaim's "naive" driver, which creates every
-# volume with a full recursive file copy instead of a copy-on-write
-# mount - a major throughput difference for a worker that's constantly
-# creating/destroying volumes. Set to false to fall back to Concourse's
-# own auto-detection.
+# overlay avoids baggageclaim's copy-per-volume "naive" driver. btrfs is
+# also supported (set to "btrfs") if you'd rather use its native CoW/quotas.
+# Set to false to fall back to Concourse's own auto-detection.
 concourse_baggageclaim_driver: overlay
 concourse_worker_env: {}
 # Worker filesystem variables
@@ -121,19 +120,13 @@ concourse_work_volume_mount_opts: "rw,noatime,nodiratime"
 
 # Worker host tuning variables
 #
-# Containers on this host share the host's inotify limits (they are not
-# namespaced), so build tooling using watch-mode/file-watching easily
-# exhausts the stock Linux defaults and falls back to slow polling.
-# Purely additive - raising these limits has no downside - so it's on
-# by default.
-concourse_worker_manage_inotify_limits: true
+# Master switch: tunes this host's OS for dedicated Concourse/containerd
+# use (inotify limits, swap, writeback - see tasks/worker/tuning.yml).
+# Off by default since it's host-wide and only fits a dedicated box.
+concourse_worker_tune_os: false
+
 concourse_worker_inotify_max_user_watches: 1048576
 concourse_worker_inotify_max_user_instances: 1024
-
-# Off by default: these rewrite host-wide VM/writeback behaviour, which
-# is only appropriate when this host is dedicated to running Concourse
-# (no other workload's durability/latency expectations to consider).
-concourse_worker_manage_io_tuning: false
+concourse_worker_vm_swappiness: 0
 concourse_worker_vm_dirty_ratio: 40
 concourse_worker_vm_dirty_background_ratio: 10
-concourse_worker_vm_swappiness: 10

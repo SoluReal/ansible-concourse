@@ -199,11 +199,8 @@ Set the required env variables in `concourse_web_env`. E.g. to configure local u
 * `concourse_tsa_host`: Required. The value of the `--tsa-host` option.
 * `concourse_tsa_public_key`: Required. The tsa public key.
 * `concourse_tsa_worker_key`: Required. The tsa worker private key.
-* `concourse_baggageclaim_driver`: Optional. Default: `overlay`. The driver to use for managing volumes. `overlay`
-  avoids the "naive" driver's full recursive copy on every volume creation, which is a major throughput difference
-  on a busy worker. Set to `false` to fall back to Concourse's own auto-detection (the previous role default).
-  For best `overlay` performance, back `concourse_work_dir` with local SSD/NVMe storage rather than network
-  storage.
+* `concourse_baggageclaim_driver`: Optional. Default: `overlay`. The driver to use for managing volumes. `btrfs`
+  is also supported. Set to `false` to fall back to Concourse's own auto-detection (the previous role default).
 * `concourse_worker_env`: Optional. A hash of environment variables made available to the `concourse worker` process.
 * `concourse_manage_work_volume`: Optional. Default: "no". Activate management of the work volume.
 * `concourse_work_volume_device`: Required when `concourse_manage_work_volume` is "yes". The device to mount as the work volume.
@@ -216,20 +213,15 @@ Set the required env variables in `concourse_web_env`. E.g. to configure local u
 
 #### Worker Host Tuning Variables
 
-These tune the host itself for running containerized build workloads. The I/O variables rewrite host-wide
-VM/writeback behaviour and default to off, since they're only appropriate when this host is dedicated to running
-Concourse.
+Tunes the host itself for a machine dedicated to running Concourse/containerd workloads (inotify limits, swap,
+writeback). All gated behind one master switch since it's host-wide and only fits a dedicated box.
 
-* `concourse_worker_manage_inotify_limits`: Optional. Default: "yes". Raise `fs.inotify.max_user_watches` and
-  `fs.inotify.max_user_instances`, since containers share the host's inotify limits and build tooling using
-  watch-mode easily exhausts the stock Linux defaults.
+* `concourse_worker_tune_os`: Optional. Default: "no". Master switch for the tuning below.
 * `concourse_worker_inotify_max_user_watches`: Optional. Default: `1048576`.
 * `concourse_worker_inotify_max_user_instances`: Optional. Default: `1024`.
-* `concourse_worker_manage_io_tuning`: Optional. Default: "no". Tune `vm.dirty_ratio`, `vm.dirty_background_ratio`
-  and `vm.swappiness` for a host where write durability/latency isn't shared with other workloads.
+* `concourse_worker_vm_swappiness`: Optional. Default: `0`.
 * `concourse_worker_vm_dirty_ratio`: Optional. Default: `40`.
 * `concourse_worker_vm_dirty_background_ratio`: Optional. Default: `10`.
-* `concourse_worker_vm_swappiness`: Optional. Default: `10`.
 
 ## Credits
 

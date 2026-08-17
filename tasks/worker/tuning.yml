@@ -1,5 +1,5 @@
 ---
-- name: Raise inotify watch/instance limits for containerized build tooling
+- name: Tune host for containerized build workloads
   ansible.posix.sysctl:
     name: "{{ item.name }}"
     value: "{{ item.value }}"
@@ -11,28 +11,14 @@
       value: "{{ concourse_worker_inotify_max_user_watches }}"
     - name: fs.inotify.max_user_instances
       value: "{{ concourse_worker_inotify_max_user_instances }}"
-  loop_control:
-    label: "{{ item.name }}"
-  when: concourse_worker_manage_inotify_limits
-  tags:
-    - no-test
-
-- name: Tune VM writeback/swap behaviour for a dedicated CI host
-  ansible.posix.sysctl:
-    name: "{{ item.name }}"
-    value: "{{ item.value }}"
-    sysctl_set: true
-    reload: true
-  become: true
-  loop:
+    - name: vm.swappiness
+      value: "{{ concourse_worker_vm_swappiness }}"
     - name: vm.dirty_ratio
       value: "{{ concourse_worker_vm_dirty_ratio }}"
     - name: vm.dirty_background_ratio
       value: "{{ concourse_worker_vm_dirty_background_ratio }}"
-    - name: vm.swappiness
-      value: "{{ concourse_worker_vm_swappiness }}"
   loop_control:
     label: "{{ item.name }}"
-  when: concourse_worker_manage_io_tuning
+  when: concourse_worker_tune_os
   tags:
     - no-test
