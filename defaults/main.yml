@@ -66,7 +66,12 @@ concourse_session_signing_key_path: "{{ concourse_etc_dir }}/session_signing_key
 #concourse_authorized_worker_keys: []
 #concourse_base_resource_type_defaults_file: "{{ concourse_etc_dir }}/base_resource_type_defaults.yml"
 concourse_web_env: {}
-concourse_enable_global_resources: false
+# Shares resource-check volumes/results across pipelines instead of
+# duplicating them per pipeline - cuts redundant checks and volume
+# storage, which matters most once several pipelines share resources.
+# Set to false to restore the previous role default.
+# Still a real, non-deprecated, default-off flag as of Concourse 8.3.0.
+concourse_enable_global_resources: true
 
 # Web PostgreSQL variables
 concourse_postgres_install: false
@@ -97,7 +102,10 @@ concourse_tsa_worker_key_path: "{{ concourse_etc_dir }}/worker_key"
 #concourse_tsa_host:
 #concourse_tsa_public_key:
 #concourse_tsa_worker_key:
-#concourse_baggageclaim_driver:
+# overlay avoids baggageclaim's copy-per-volume "naive" driver. btrfs is
+# also supported (set to "btrfs") if you'd rather use its native CoW/quotas.
+# Set to false to fall back to Concourse's own auto-detection.
+concourse_baggageclaim_driver: overlay
 concourse_worker_env: {}
 # Worker filesystem variables
 
@@ -109,3 +117,16 @@ concourse_work_volume_fs_force_create: false
 concourse_work_volume_fs_resize: false
 concourse_work_volume_mount_path: "{{ concourse_work_dir }}"
 concourse_work_volume_mount_opts: "rw,noatime,nodiratime"
+
+# Worker host tuning variables
+#
+# Master switch: tunes this host's OS for dedicated Concourse/containerd
+# use (inotify limits, swap, writeback - see tasks/worker/tuning.yml).
+# Off by default since it's host-wide and only fits a dedicated box.
+concourse_worker_tune_os: false
+
+concourse_worker_inotify_max_user_watches: 1048576
+concourse_worker_inotify_max_user_instances: 1024
+concourse_worker_vm_swappiness: 0
+concourse_worker_vm_dirty_ratio: 40
+concourse_worker_vm_dirty_background_ratio: 10

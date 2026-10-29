@@ -16,3 +16,4 @@ galaxy_info:
 
 collections:
   - community.general
+  - ansible.posix

@@ -1,6 +1,6 @@
 ---
 - name: Probe btrfs module
-  modprobe:
+  community.general.modprobe:
     name: btrfs
     state: present
   become: true
@@ -14,14 +14,14 @@
   when: concourse_baggageclaim_driver == 'btrfs'
 
 - name: Probe overlay module
-  modprobe:
+  community.general.modprobe:
     name: overlay
     state: present
   become: true
   when: concourse_baggageclaim_driver == 'overlay'
 
 - name: Unmount work volume
-  mount:
+  ansible.posix.mount:
     path: "{{ concourse_work_volume_mount_path }}"
     state: unmounted
   become: true
@@ -29,7 +29,7 @@
   register: unmount_work_volume
 
 - name: Create work volume filesystem
-  filesystem:
+  community.general.filesystem:
     dev: "{{ concourse_work_volume_device }}"
     fstype: "{{ concourse_work_volume_fs_type }}"
     force: "{{ concourse_work_volume_fs_force_create }}"
@@ -38,7 +38,7 @@
   when: unmount_work_volume is succeeded
 
 - name: Mount work volume
-  mount:
+  ansible.posix.mount:
     path: "{{ concourse_work_volume_mount_path }}"
     src: "{{ concourse_work_volume_device }}"
     fstype: "{{ concourse_work_volume_fs_type }}"

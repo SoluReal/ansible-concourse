@@ -14,7 +14,7 @@ exec {{ concourse_binary_path }} worker \
 {% if concourse_log_level is defined %}
   --log-level "{{ concourse_log_level }}" \
 {% endif %}
-{% if concourse_baggageclaim_driver is defined %}
+{% if concourse_baggageclaim_driver %}
   --baggageclaim-driver "{{ concourse_baggageclaim_driver }}" \
 {% endif %}
   ;

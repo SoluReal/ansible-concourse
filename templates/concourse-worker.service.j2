@@ -6,11 +6,24 @@ Requires=network-online.target
 After=network-online.target
 
 [Service]
+# The worker manages containers, volumes, network namespaces and cgroups
+# directly (via containerd/gardenized runc), which requires root - unlike
+# concourse-web this cannot run as an unprivileged user.
+User=root
+Group=root
 EnvironmentFile=-{{ concourse_env_file }}
 TasksMax=infinity
 LimitNOFILE=infinity
 LimitMEMLOCK=infinity
 Restart=on-failure
+RestartSec=3
+# Generous timeout: ExecStop asks the worker to land/retire, which drains
+# in-flight containers before the process is allowed to exit.
+TimeoutStopSec=300
+# Protect the worker daemon itself from the OOM killer: an unlucky build
+# container's memory spike should not be able to take down the process
+# managing every other container on this host.
+OOMScoreAdjust=-500
 ExecStart={{ concourse_worker_launcher_path }}
 {% if concourse_worker_land_on_stop %}
 ExecStop={{ concourse_worker_land_path }}
