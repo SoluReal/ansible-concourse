@@ -1,0 +1,34 @@
+---
+dependency:
+  name: galaxy
+driver:
+  name: docker
+platforms:
+  - name: concourse-noble-local-binary
+    image: "geerlingguy/docker-ubuntu2404-ansible:latest"
+    pre_build_image: true
+provisioner:
+  name: ansible
+  options:
+    skip-tags: no-test
+  playbooks:
+    converge: ../default/converge.yml
+  inventory:
+    host_vars:
+      concourse-noble-local-binary:
+        ansible_python_interpreter: /usr/bin/python3
+        concourse_binary_src: "${MOLECULE_SCENARIO_DIRECTORY}/files/concourse"
+verifier:
+  name: testinfra
+  options:
+    v: true
+scenario:
+  test_sequence:
+    - dependency
+    - destroy
+    - syntax
+    - create
+    - converge
+    - idempotence
+    - verify
+    - destroy

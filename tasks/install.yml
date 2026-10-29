@@ -34,16 +34,26 @@
   ignore_errors: true
   register: binary
 
+# A local build reports its compile-time version (e.g. 0.0.0-dev), which would reinstall every run.
 - name: Get concourse version
   ansible.builtin.command: "{{ concourse_binary_path }} -v"
   become: true
   register: installed_version
   changed_when: false
-  when: binary.stat is defined and binary.stat.exists
+  when:
+    - binary.stat is defined and binary.stat.exists
+    - concourse_binary_src | length == 0
 
+# With concourse_binary_src set, only a missing binary triggers an archive install.
 - name: Check needs install
   ansible.builtin.set_fact:
-    needs_install: "{{ not binary.stat.exists or installed_version is defined and installed_version.stdout != concourse_version }}"
+    needs_install: >-
+      {{
+        not binary.stat.exists
+        or (installed_version is defined
+            and not installed_version.skipped | default(false)
+            and installed_version.stdout != concourse_version)
+      }}
 
 - name: Download archive
   ansible.builtin.get_url:
@@ -83,6 +93,21 @@
     state: absent
   become: true
   when: concourse_archive_delete_after_unarchive
+
+# Runs regardless of needs_install so a fresh archive install still ends with the local binary;
+# copy's atomic rename avoids ETXTBSY on a running worker.
+- name: Install local concourse binary
+  ansible.builtin.copy:
+    src: "{{ concourse_binary_src }}"
+    dest: "{{ concourse_binary_path }}"
+    owner: "{{ concourse_user }}"
+    group: "{{ concourse_group }}"
+    mode: "{{ concourse_binary_mode }}"
+  become: true
+  when: concourse_binary_src | length > 0
+  notify:
+    - Restart concourse web
+    - Restart concourse worker
 
 - name: Binary permissions
   ansible.builtin.file:

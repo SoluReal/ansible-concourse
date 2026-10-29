@@ -33,6 +33,9 @@ concourse_archive_url: "https://github.com/concourse/concourse/releases/download
 concourse_archive_os: linux
 concourse_archive_fetch_timeout: 30
 concourse_archive_delete_after_unarchive: true
+# Local concourse binary to install over the archive's; while set, version bumps don't refresh
+# archive assets on existing hosts (delete concourse_binary_path to force).
+concourse_binary_src: ""
 concourse_binary_mode: "0750"
 concourse_etc_files_mode: "0400"
 

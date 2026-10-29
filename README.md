@@ -111,6 +111,7 @@ but exist for when control over related behaviour is needed.
 * `concourse_archive_os`: Optional. The operating system for which to fetch the Concourse release tarball.
 * `concourse_archive_fetch_timeout`: Optional. The timeout in seconds for fetching the Concourse release tarball.
 * `concourse_archive_delete_after_unarchive`: Optional. Default: "yes". Delete the release tarball after it is unpacked.
+* `concourse_binary_src`: Optional. Path on the control machine to a locally built `concourse` binary to install in place of the one from the release tarball, for running a patched build without publishing a custom release. The tarball is still downloaded and unpacked, since it carries more than this binary; only `bin/concourse` is replaced afterwards. Empty (the default) uses the tarball's binary unchanged.
 * `concourse_binary_mode`: Optional. The file mode of the Concourse binary.
 * `concourse_etc_files_mode`: Optional. The file mode of all files stored in `concourse_etc_dir`.
 
