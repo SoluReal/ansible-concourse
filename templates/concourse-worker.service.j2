@@ -11,6 +11,11 @@ TasksMax=infinity
 LimitNOFILE=infinity
 LimitMEMLOCK=infinity
 Restart=on-failure
+RestartSec=3
+# ExecStop lands/retires the worker, which waits for in-flight builds to drain.
+TimeoutStopSec=300
+# One build's memory spike should not take down the daemon managing every container.
+OOMScoreAdjust=-500
 ExecStart={{ concourse_worker_launcher_path }}
 {% if concourse_worker_land_on_stop %}
 ExecStop={{ concourse_worker_land_path }}

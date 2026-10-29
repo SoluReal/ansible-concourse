@@ -112,3 +112,23 @@ concourse_work_volume_fs_force_create: false
 concourse_work_volume_fs_resize: false
 concourse_work_volume_mount_path: "{{ concourse_work_dir }}"
 concourse_work_volume_mount_opts: "rw,noatime,nodiratime"
+
+# Host-wide, so only for a dedicated worker box.
+concourse_worker_tune_os: false
+concourse_worker_sysctls:
+  # Containers share the host's inotify limits; watch-mode tooling exhausts the stock ones.
+  fs.inotify.max_user_watches: 1048576
+  fs.inotify.max_user_instances: 1024
+  # Unprivileged containers share one host uid's keyring quota (stock: 200 keys).
+  kernel.keys.maxkeys: 50000
+  kernel.keys.maxbytes: 500000
+  # Every container adds a veth; stock ARP table caps are sized for a few interfaces.
+  net.ipv4.neigh.default.gc_thresh1: 2048
+  net.ipv4.neigh.default.gc_thresh2: 4096
+  net.ipv4.neigh.default.gc_thresh3: 8192
+  # All container traffic is NAT'd and tracked host-side.
+  net.netfilter.nf_conntrack_max: 1048576
+  # PMTU black-hole mitigation for the containerd MTU issue (concourse/concourse#6613).
+  net.ipv4.tcp_mtu_probing: 1
+  # Memory-map-heavy workloads (e.g. Elasticsearch) need more than the stock 65530.
+  vm.max_map_count: 262144
