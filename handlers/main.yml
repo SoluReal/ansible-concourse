@@ -1,4 +1,10 @@
 ---
+# Handlers run in definition order: reload units before any restart picks them up.
+- name: Systemd daemon reload
+  ansible.builtin.systemd:
+    daemon_reload: true
+  become: true
+
 - name: Stop concourse web
   ansible.builtin.service:
     name: concourse-web
@@ -26,8 +32,3 @@
     state: restarted
   become: true
   when: concourse_worker_service is defined and concourse_worker and concourse_service_enabled and concourse_service_start
-
-- name: Systemd daemon reload
-  ansible.builtin.systemd:
-    daemon_reload: true
-  become: true

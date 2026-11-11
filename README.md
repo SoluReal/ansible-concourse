@@ -92,7 +92,7 @@ but exist for when control over related behaviour is needed.
 ### User Variables
 
 * `concourse_manage_user`: Optional. Default: "yes". Manage the system user to which file ownership is assigned.
-* `concourse_user`: Optional. The user that will own the Concourse install directory and the running process.
+* `concourse_user`: Optional. The user that will own the Concourse install directory and the running process. The web process runs as this user, so any TLS or Postgres certificate and key paths it is given must be readable by it; the worker always runs as root because it manages containers directly.
 * `concourse_uid`: Optional. The user ID.
 * `concourse_group`: Optional. The group that will own the Concourse install directory and the running process.
 * `concourse_gid`: Optional. The group ID.
@@ -209,6 +209,8 @@ Set the required env variables in `concourse_web_env`. E.g. to configure local u
 * `concourse_work_volume_fs_resize`: Optional. Default: "no". If yes, if the work volume block device and filesystem size differ, grow the filesystem into the space.
 * `concourse_work_volume_mount_path`: Optional. The directory to which the work volume will be mounted.
 * `concourse_work_volume_mount_opts`: Optional. Work volume mount options.
+* `concourse_worker_tune_os`: Optional. Default: "no". Apply `concourse_worker_sysctls` to the host. Host-wide, so only for a host dedicated to the worker.
+* `concourse_worker_sysctls`: Optional. A hash of sysctl settings applied when `concourse_worker_tune_os` is "yes". The default raises the inotify, keyring, ARP-table, conntrack and memory-map limits that container churn exhausts first, and enables TCP MTU probing; overriding it replaces the whole set.
 
 ## Credits
 

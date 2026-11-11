@@ -1,0 +1,24 @@
+---
+# net.netfilter.nf_conntrack_* only exists once the module is loaded.
+- name: Load the nf_conntrack module
+  community.general.modprobe:
+    name: nf_conntrack
+    state: present
+    persistent: present
+  become: true
+  when: concourse_worker_tune_os
+  tags:
+    - no-test
+
+- name: Tune host for containerized build workloads
+  ansible.posix.sysctl:
+    name: "{{ item.key }}"
+    value: "{{ item.value }}"
+    sysctl_set: true
+  become: true
+  loop: "{{ concourse_worker_sysctls | dict2items }}"
+  loop_control:
+    label: "{{ item.key }}"
+  when: concourse_worker_tune_os
+  tags:
+    - no-test
