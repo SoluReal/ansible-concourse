@@ -29,6 +29,8 @@ RestrictRealtime=true
 RestrictNamespaces=true
 LockPersonality=true
 MemoryDenyWriteExecute=true
+# The worker runs these binaries as root, so web's user must not be able to replace them.
+ReadOnlyPaths={{ concourse_install_dir }}
 ExecStart={{ concourse_web_launcher_path }}
 ExecReload=/bin/kill -HUP $MAINPID
 KillSignal=SIGTERM

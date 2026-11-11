@@ -92,7 +92,7 @@ but exist for when control over related behaviour is needed.
 ### User Variables
 
 * `concourse_manage_user`: Optional. Default: "yes". Manage the system user to which file ownership is assigned.
-* `concourse_user`: Optional. The user that will own the Concourse install directory and the running process. The web process runs as this user, so any TLS certificate or key paths it is given must be readable by it; the worker always runs as root because it manages containers directly.
+* `concourse_user`: Optional. The user that will own the Concourse install directory and the running process. The web process runs as this user, so any TLS or Postgres certificate and key paths it is given must be readable by it; the worker always runs as root because it manages containers directly.
 * `concourse_uid`: Optional. The user ID.
 * `concourse_group`: Optional. The group that will own the Concourse install directory and the running process.
 * `concourse_gid`: Optional. The group ID.
